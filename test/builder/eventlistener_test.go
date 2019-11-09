@@ -304,11 +304,13 @@ func TestEventListenerBuilder(t *testing.T) {
 				Triggers: []v1alpha1.EventListenerTrigger{{
 					Name: "foo-trig",
 					Interceptor: &v1alpha1.EventInterceptor{
-						ObjectRef: &corev1.ObjectReference{
-							Kind:       "Service",
-							Namespace:  "namespace",
-							Name:       "foo",
-							APIVersion: "v1",
+						Webhook: &v1alpha1.WebhookInterceptor{
+							ObjectRef: &corev1.ObjectReference{
+								Kind:       "Service",
+								Namespace:  "namespace",
+								Name:       "foo",
+								APIVersion: "v1",
+							},
 						},
 					},
 					Bindings: []*v1alpha1.EventListenerBinding{{
@@ -361,11 +363,13 @@ func TestEventListenerBuilder(t *testing.T) {
 								},
 							},
 						},
-						ObjectRef: &corev1.ObjectReference{
-							Kind:       "Service",
-							Namespace:  "namespace",
-							Name:       "foo",
-							APIVersion: "v1",
+						Webhook: &v1alpha1.WebhookInterceptor{
+							ObjectRef: &corev1.ObjectReference{
+								Kind:       "Service",
+								Namespace:  "namespace",
+								Name:       "foo",
+								APIVersion: "v1",
+							},
 						},
 					},
 					Bindings: []*v1alpha1.EventListenerBinding{{

@@ -14,7 +14,7 @@
  limitations under the License.
 */
 
-package sink
+package webhook
 
 import (
 	"bytes"
@@ -43,6 +43,7 @@ func GetURI(objRef *corev1.ObjectReference, ns string) (*url.URL, error) {
 }
 
 func createOutgoingRequest(ctx context.Context, original *http.Request, url *url.URL, payload []byte) *http.Request {
+
 	r := original.Clone(ctx)
 	r.RequestURI = "" // RequestURI cannot be set in outgoing requests
 	r.URL = url

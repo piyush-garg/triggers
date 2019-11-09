@@ -175,11 +175,13 @@ func EventListenerTriggerName(name string) EventListenerTriggerOp {
 func EventListenerTriggerInterceptor(name, version, kind, namespace string, ops ...EventInterceptorOp) EventListenerTriggerOp {
 	return func(t *v1alpha1.EventListenerTrigger) {
 		t.Interceptor = &v1alpha1.EventInterceptor{
-			ObjectRef: &corev1.ObjectReference{
-				Kind:       kind,
-				Name:       name,
-				APIVersion: version,
-				Namespace:  namespace,
+			Webhook: &v1alpha1.WebhookInterceptor{
+				ObjectRef: &corev1.ObjectReference{
+					Kind:       kind,
+					Name:       name,
+					APIVersion: version,
+					Namespace:  namespace,
+				},
 			},
 		}
 		for _, op := range ops {

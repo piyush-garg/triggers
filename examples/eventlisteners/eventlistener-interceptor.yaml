@@ -14,11 +14,12 @@ spec:
           value:
           - array-val1
           - array-val2
-        objectRef:
-          kind: Service
-          name: gh-validate
-          apiVersion: v1
-          namespace: default
+        webhook:
+          objectRef:
+            kind: Service
+            name: gh-validate
+            apiVersion: v1
+            namespace: default
       bindings:
       - name: pipeline-binding
       template:

@@ -77,6 +77,12 @@ type EventInterceptor struct {
 	// interceptor request headers. This allows the interceptor to make
 	// decisions specific to an EventListenerTrigger.
 	Header []pipelinev1.Param `json:"header,omitempty"`
+
+	Webhook *WebhookInterceptor `json:"webhook,omitempty"`
+}
+
+// WebhookInterceptor provides a webhook to intercept and pre-process events
+type WebhookInterceptor struct {
 	// ObjectRef is a reference to an object that will resolve to a cluster DNS
 	// name to use as the EventInterceptor. Either objectRef or url can be specified
 	// +optional

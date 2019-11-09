@@ -81,26 +81,28 @@ func (s *EventListenerSpec) validate(ctx context.Context, el *EventListener) *ap
 }
 
 func (i *EventInterceptor) validate(ctx context.Context, namespace string) *apis.FieldError {
-	if i.ObjectRef == nil || len(i.ObjectRef.Name) == 0 {
-		return apis.ErrMissingField("interceptor.objectRef")
-	}
 	// Optional explicit match
-	if len(i.ObjectRef.Kind) != 0 {
-		if i.ObjectRef.Kind != "Service" {
+	if i.Webhook == nil || i.Webhook.ObjectRef == nil || len(i.Webhook.ObjectRef.Name) == 0 {
+		return apis.ErrMissingField("interceptor.webhook.objectRef")
+	}
+	w := i.Webhook
+	if len(w.ObjectRef.Kind) != 0 {
+		if w.ObjectRef.Kind != "Service" {
 			return apis.ErrInvalidValue(fmt.Errorf("Invalid kind"), "interceptor.objectRef.kind")
 		}
 	}
 	// Optional explicit match
-	if len(i.ObjectRef.APIVersion) != 0 {
-		if i.ObjectRef.APIVersion != "v1" {
+	if len(w.ObjectRef.APIVersion) != 0 {
+		if w.ObjectRef.APIVersion != "v1" {
 			return apis.ErrInvalidValue(fmt.Errorf("Invalid apiVersion"), "interceptor.objectRef.apiVersion")
 		}
 	}
-	if len(i.ObjectRef.Namespace) != 0 {
-		namespace = i.ObjectRef.Namespace
+	if len(w.ObjectRef.Namespace) != 0 {
+		namespace = w.ObjectRef.Namespace
 	}
+
 	clientset := ctx.Value("clientSet").(dynamic.Interface)
-	_, err := clientset.Resource(services).Namespace(namespace).Get(i.ObjectRef.Name, metav1.GetOptions{})
+	_, err := clientset.Resource(services).Namespace(namespace).Get(w.ObjectRef.Name, metav1.GetOptions{})
 	if err != nil {
 		return apis.ErrInvalidValue(err, "interceptor.objectRef.name")
 	}
