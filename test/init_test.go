@@ -55,6 +55,7 @@ func setup(t *testing.T) (*clients, string) {
 
 	c := newClients(t, knativetest.Flags.Kubeconfig, knativetest.Flags.Cluster)
 	createNamespace(t, namespace, c.KubeClient)
+	labelNamespace(t, namespace, c.KubeClient)
 	verifyDefaultServiceAccountExists(t, namespace, c.KubeClient)
 	return c, namespace
 }
@@ -236,4 +237,21 @@ func getCRDYaml(cs *clients, ns string) ([]byte, error) {
 	}
 
 	return output, nil
+}
+
+func labelNamespace(t *testing.T, namespace string, kubeClient kubernetes.Interface) {
+	t.Helper()
+	t.Logf("Label namespace %s", namespace)
+	ns, err := kubeClient.CoreV1().Namespaces().Get(context.Background(), namespace, metav1.GetOptions{})
+	if err != nil {
+		t.Fatalf("Failed to get namespace %s for tests: %s", namespace, err)
+	}
+	if _, ok := ns.Labels["operator.tekton.dev/disable-annotation"]; !ok {
+		ns.Labels = map[string]string{
+			"operator.tekton.dev/disable-annotation": "disabled",
+		}
+	}
+	if _, err := kubeClient.CoreV1().Namespaces().Update(context.Background(), ns, metav1.UpdateOptions{}); err != nil {
+		t.Fatalf("Failed to update namespace %s for tests: %s", namespace, err)
+	}
 }
